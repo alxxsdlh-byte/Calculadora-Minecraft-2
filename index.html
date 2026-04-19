@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mundo Minecraft</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+ 
+    .world {
+      display: grid;
+      width: 100vw;
+      height: 100vh;
+      grid-template-columns: repeat(10, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+    }
+    .block { overflow: hidden; }
+    .block img { width: 100%; height: 100%; object-fit: cover; display: block; }
+ 
+    .titulo-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 50%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 2%;
+      pointer-events: none;
+    }
+    .titulo-overlay img { max-width: 80%; max-height: 80%; object-fit: contain; }
+ 
+    /* Overworld: centrado en la mitad superior */
+    .calc-ow {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      
+      
+      border-radius: 10px;
+      padding: 14px 20px;
+      color: #fff;
+      width: 380px;
+      text-align: center;
+    }
+ 
+    /* Nether: centrado en la mitad inferior */
+    .calc-ne {
+      position: absolute;
+      top: 75%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      
+      
+      border-radius: 10px;
+      padding: 14px 20px;
+      color: #fff;
+      width: 380px;
+      text-align: center;
+    }
+ 
+    .calc-title { font-size: 15px; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
+    .ow-title { color: #7ddb4a; }
+    .ne-title { color: #e05555; }
+ 
+    .fields { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+    .fields label { font-size: 11px; color: #ccc; display: block; margin-bottom: 3px; }
+    .fields input {
+      width: 80px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: 1px solid #666;
+      background: transparent;
+      color: #fff;
+      font-size: 13px;
+      text-align: center;
+      outline: none;
+    }
+    .fields input::placeholder { color: #aaa; }
+ 
+    .calc-btn {
+      padding: 6px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .btn-ow { background: #5a9e3a; color: #fff; }
+    .btn-ne { background: #8b1a1a; color: #fff; }
+ 
+    .result {
+      font-size: 13px;
+      color: #f0f0f0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 6px 10px;
+      min-height: 28px;
+    }
+  </style>
+</head>
+<body>
+  <div class="world" id="world"></div>
+ 
+  <div class="titulo-overlay">
+    <img src="C:/Users/Alexx/Downloads/Titulo.png" alt="Titulo">
+  </div>
+ 
+  <div class="calc-ow">
+    <div class="calc-title ow-title">Overworld → Nether</div>
+    <div class="fields">
+      <div><label>X</label><input type="number" id="ow-x" placeholder="X"></div>
+      <div><label>Y</label><input type="number" id="ow-y" placeholder="Y"></div>
+      <div><label>Z</label><input type="number" id="ow-z" placeholder="Z"></div>
+    </div>
+    <button class="calc-btn btn-ow" onclick="owToNe()">Calcular</button>
+    <div class="result" id="res-ow">Ingresa coordenadas del Overworld</div>
+  </div>
+ 
+  <div class="calc-ne">
+    <div class="calc-title ne-title">Nether → Overworld</div>
+    <div class="fields">
+      <div><label>X</label><input type="number" id="ne-x" placeholder="X"></div>
+      <div><label>Y</label><input type="number" id="ne-y" placeholder="Y"></div>
+      <div><label>Z</label><input type="number" id="ne-z" placeholder="Z"></div>
+    </div>
+    <button class="calc-btn btn-ne" onclick="neToOw()">Calcular</button>
+    <div class="result" id="res-ne">Ingresa coordenadas del Nether</div>
+  </div>
+ 
+  <script>
+    const cols = 10, grassRows = 3, netherRows = 3;
+    const world = document.getElementById('world');
+    let html = '';
+    for (let r = 0; r < grassRows; r++)
+      for (let c = 0; c < cols; c++)
+        html += `<div class="block"><img src="C:/Users/Alexx/Downloads/Grass.jpg" alt="Grass"></div>`;
+    for (let r = 0; r < netherRows; r++)
+      for (let c = 0; c < cols; c++)
+        html += `<div class="block"><img src="C:/Users/Alexx/Downloads/Nether.jpg" alt="Nether"></div>`;
+    world.innerHTML = html;
+ 
+    function v(id) { const n = parseFloat(document.getElementById(id).value); return isNaN(n) ? 0 : n; }
+    function r(n) { return Math.round(n * 100) / 100; }
+ 
+    function owToNe() {
+      const x = v('ow-x'), y = v('ow-y'), z = v('ow-z');
+      document.getElementById('res-ow').textContent = `Nether → X: ${r(x/8)}  Y: ${r(y)}  Z: ${r(z/8)}`;
+    }
+    function neToOw() {
+      const x = v('ne-x'), y = v('ne-y'), z = v('ne-z');
+      document.getElementById('res-ne').textContent = `Overworld → X: ${r(x*8)}  Y: ${r(y)}  Z: ${r(z*8)}`;
+    }
+  </script>
+</body>
+</html>
